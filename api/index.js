@@ -12,6 +12,11 @@ const SerializadorErro = require('./Serializador').SerializadorErro
 app.use(bodyParser.json())
 
 app.use((requisicao, resposta, proximo) => {
+    resposta.set('X-Powered-By', 'Gatito Petshop')
+    proximo()
+})
+
+app.use((requisicao, resposta, proximo) => {
     let formatoRequisitado = requisicao.header('Accept')
 
     if (formatoRequisitado === '*/*') {
@@ -28,8 +33,16 @@ app.use((requisicao, resposta, proximo) => {
     proximo()
 })
 
+app.use((requisicao, resposta, proximo) => {
+    resposta.set('Acess-Control-Allow-Origin', '*')
+    proximo()
+})
+
 const roteador = require('./rotas/fornecedores')
 app.use('/api/fornecedores', roteador)
+
+const roteadorV2 = require ('./rotas/fornecedores/rotas.v2')
+app.use('/api/v2/fornecedores', roteadorV2)
 
 app.use((erro, requisicao, resposta, proximo) => {
     let status = 500
